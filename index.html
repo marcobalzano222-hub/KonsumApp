@@ -1,0 +1,1028 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>MindfulCart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#F5F2ED;--card:#FFFFFF;--ink:#1C1A17;--ink2:#6B6760;--ink3:#B0ABA4;
+  --gold:#C9973A;--gold-l:#F5E8CC;--gold-d:#A67828;
+  --green:#3D7A56;--green-l:#E4F2EB;--red:#A33A3A;--red-l:#F5E4E4;
+  --border:#E8E3DB;--serif:'Playfair Display',Georgia,serif;--sans:'Jost',system-ui,sans-serif;
+  --r:14px;--r2:20px;--safe:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);min-height:100dvh;display:flex;justify-content:center}
+#app{width:100%;max-width:480px;min-height:100dvh;background:var(--bg);position:relative}
+button,input,textarea{font-family:inherit}
+
+/* PAGES */
+.page{display:none;flex-direction:column;min-height:100dvh}
+.page.active{display:flex}
+
+/* TOPBAR */
+.topbar{padding:20px 18px 12px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.logo{font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--ink)}
+.logo span{color:var(--gold);font-style:italic}
+
+/* TABS */
+.tabs{display:flex;background:var(--bg);border-bottom:1px solid var(--border);padding:0 18px;position:sticky;top:61px;z-index:40}
+.tbtn{flex:1;padding:10px 4px 11px;border:none;background:transparent;font-family:var(--sans);font-size:.72rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);border-bottom:2px solid transparent;cursor:pointer}
+.tbtn.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* FAB */
+.fab{width:40px;height:40px;border-radius:50%;background:var(--gold);border:none;color:#fff;font-size:1.4rem;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(201,151,58,.35)}
+
+/* FILTER */
+.filter-row{padding:10px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.filter-row::-webkit-scrollbar{display:none}
+.fchip{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-size:.72rem;font-weight:500;color:var(--ink2);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.fchip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.vtrow{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.vtbtn{width:30px;height:30px;border:1.5px solid var(--border);border-radius:8px;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:.85rem}
+.vtbtn.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* GALLERY */
+.gallery{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
+.gallery.lm{grid-template-columns:1fr}
+
+.gcard{background:var(--card);border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);cursor:pointer;animation:pop .2s ease both}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.gcard:active{opacity:.85}
+.gcard.lm{display:flex}
+
+.gcard-img-wrap{position:relative}
+.gcard-thumb{width:100%;height:130px;object-fit:cover;display:block}
+.gcard-placeholder{width:100%;height:130px;background:var(--gold-l);display:flex;align-items:center;justify-content:center;font-size:2.4rem;color:var(--gold-d)}
+.lm .gcard-thumb,.lm .gcard-placeholder{width:90px;height:90px;flex-shrink:0;border-radius:0}
+.gcard-badge{position:absolute;top:7px;right:7px;font-size:.58rem;font-weight:600;padding:2px 8px;border-radius:20px;color:#fff;letter-spacing:.03em}
+.gcard-badge.bought{background:var(--green)}
+.gcard-badge.rejected{background:var(--red)}
+
+.gcard-body{padding:10px 12px 12px;flex:1;min-width:0}
+.gcard-cat{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--gold-d);background:var(--gold-l);display:inline-block;padding:2px 8px;border-radius:20px;margin-bottom:5px}
+.gcard-name{font-family:var(--serif);font-size:.96rem;font-weight:400;line-height:1.25;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lm .gcard-name{-webkit-line-clamp:1}
+.gcard-price{font-size:1rem;font-weight:600;margin-bottom:7px}
+.gcard-foot{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.prio-dots{display:flex;gap:2px}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.pdot.on{background:var(--gold)}
+.dl-pill{font-size:.58rem;font-weight:500;padding:2px 7px;border-radius:20px;background:#E8F0F5;color:#2D6A8A}
+.dl-pill.urg{background:#F5EDE4;color:#8A4A2D}
+.dl-pill.done{background:var(--green-l);color:var(--green)}
+.gcard-date{font-size:.62rem;color:var(--ink3)}
+
+/* EMPTY */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px 24px;text-align:center;grid-column:1/-1}
+.empty-e{font-size:3rem;opacity:.22}
+.empty-t{font-family:var(--serif);font-size:1.35rem;font-weight:400;color:var(--ink2)}
+.empty-s{font-size:.83rem;color:var(--ink3);line-height:1.6}
+
+/* STATS */
+.stats-body{padding:14px;display:flex;flex-direction:column;gap:11px;flex:1}
+.sc{background:var(--card);border-radius:var(--r2);padding:16px 18px;border:1px solid var(--border)}
+.sc.dk{background:var(--ink);border-color:var(--ink)}
+.sc-l{font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px}
+.sc.dk .sc-l{color:#555}
+.sc-v{font-family:var(--serif);font-size:1.7rem;font-weight:400;color:var(--ink);line-height:1}
+.sc.dk .sc-v{color:var(--gold);font-size:2.1rem}
+.sc-s{font-size:.73rem;color:var(--ink3);margin-top:4px}
+.sc.dk .sc-s{color:#555}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.blist{display:flex;flex-direction:column;gap:10px}
+.brow{display:flex;flex-direction:column;gap:5px}
+.brow-top{display:flex;justify-content:space-between;font-size:.79rem}
+.brow-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.brow-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .6s}
+
+/* ════ FORM PAGE (full screen) ════ */
+#form-page{
+  position:fixed;inset:0;z-index:200;
+  background:var(--bg);overflow-y:auto;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  max-width:480px;left:50%;margin-left:-240px;
+}
+@media(max-width:480px){#form-page{left:0;margin-left:0}}
+#form-page.open{transform:translateX(0)}
+
+.form-topbar{padding:18px 18px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10}
+.form-topbar-t{font-family:var(--serif);font-size:1.2rem;font-weight:400;flex:1}
+.back-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+
+.step-ind{padding:14px 18px;display:flex;gap:6px;align-items:center}
+.sdot{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .2s}
+.sdot.done{background:var(--gold)}
+.snum{font-size:.7rem;color:var(--ink3);font-weight:500;white-space:nowrap;margin-left:4px}
+
+.step{display:none;padding:18px 18px 0;animation:fs .2s ease}
+.step.active{display:block}
+@keyframes fs{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.step-t{font-family:var(--serif);font-size:1.45rem;font-weight:400;margin-bottom:4px}
+.step-t em{font-style:italic;color:var(--gold)}
+.step-s{font-size:.82rem;color:var(--ink3);margin-bottom:20px;line-height:1.5}
+
+.field{margin-bottom:18px}
+.flabel{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);display:block;margin-bottom:7px}
+.fi{width:100%;padding:13px 14px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--card);font-size:.95rem;color:var(--ink);outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--gold)}
+textarea.fi{resize:none;height:88px;line-height:1.6}
+
+/* Category grid */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.copt{padding:12px 4px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--card);text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all .13s}
+.copt-e{font-size:1.5rem}
+.copt-l{font-size:.7rem;font-weight:500;color:var(--ink2)}
+.copt.on{border-color:var(--gold);background:var(--gold-l)}
+.copt.on .copt-l{color:var(--gold-d)}
+
+/* Image upload */
+.upload-area{border:2px dashed var(--border);border-radius:var(--r2);padding:22px;text-align:center;cursor:pointer;position:relative;background:var(--card);transition:all .15s}
+.upload-area:hover{border-color:var(--gold);background:var(--gold-l)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-ico{font-size:1.8rem;margin-bottom:7px}
+.upload-txt{font-size:.8rem;color:var(--ink3);line-height:1.5}
+.img-prev-wrap{position:relative;border-radius:var(--r2);overflow:hidden;margin-bottom:10px}
+.img-prev-wrap img{width:100%;max-height:190px;object-fit:cover;display:block}
+.img-rm{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(28,26,23,.7);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Prio stars */
+.pstars{display:flex;gap:8px}
+.pstar{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.pstar.on{border-color:var(--gold);background:var(--gold-l);transform:scale(1.1)}
+.prio-lbl{font-size:.75rem;color:var(--ink3);margin-top:6px}
+
+/* Status */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sbtn{padding:12px 4px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--card);font-size:.75rem;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .12s}
+.sbtn.watching.on{border-color:var(--gold);background:var(--gold-l);color:var(--gold-d)}
+.sbtn.bought.on{border-color:var(--green);background:var(--green-l);color:var(--green)}
+.sbtn.rejected.on{border-color:var(--red);background:var(--red-l);color:var(--red)}
+
+/* Deadline presets */
+.dl-presets{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.dpbtn{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:.73rem;font-weight:500;color:var(--ink2);cursor:pointer}
+.dpbtn.on{border-color:var(--gold);background:var(--gold-l);color:var(--gold-d)}
+.dl-info{font-size:.75rem;margin-top:6px}
+
+/* Form nav */
+.form-nav{padding:18px 18px calc(18px + var(--safe));display:flex;gap:10px;position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--border);margin-top:24px}
+.btn-next{flex:1;padding:14px;border-radius:var(--r2);background:var(--gold);border:none;color:#fff;font-size:1rem;font-weight:500;cursor:pointer}
+.btn-bk{padding:14px 16px;border-radius:var(--r2);background:transparent;border:1.5px solid var(--border);font-size:.9rem;font-weight:500;color:var(--ink2);cursor:pointer}
+
+/* ════ DETAIL PAGE ════ */
+#det-page{
+  position:fixed;inset:0;z-index:200;
+  background:var(--bg);overflow-y:auto;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  max-width:480px;left:50%;margin-left:-240px;
+}
+@media(max-width:480px){#det-page{left:0;margin-left:0}}
+#det-page.open{transform:translateX(0)}
+.det-topbar{position:absolute;top:0;left:0;right:0;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(rgba(28,26,23,.3),transparent)}
+.gbtn{width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:var(--ink)}
+.det-body{padding:20px 18px 44px}
+.det-cat-pill{font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--gold-d);background:var(--gold-l);display:inline-block;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.det-name{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.2;margin-bottom:8px}
+.det-price{font-size:1.9rem;font-weight:600;margin-bottom:16px}
+.det-mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.det-cell{background:var(--card);border-radius:var(--r);padding:12px 14px;border:1px solid var(--border)}
+.det-cl{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:4px}
+.det-cv{font-size:.87rem;font-weight:500}
+.det-sec{margin-bottom:18px}
+.det-sec-t{font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:9px}
+.det-box{background:var(--card);border-radius:var(--r);padding:14px;border:1px solid var(--border);font-size:.88rem;line-height:1.65;color:var(--ink2)}
+.det-dl-bar{height:5px;border-radius:3px;background:var(--border);overflow:hidden;margin-top:7px}
+.det-dl-fill{height:100%;border-radius:3px;transition:width .5s}
+.det-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dact{padding:11px 4px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--card);font-size:.73rem;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink2)}
+.dact.watching.on{border-color:var(--gold);background:var(--gold-l);color:var(--gold-d)}
+.dact.bought.on{border-color:var(--green);background:var(--green-l);color:var(--green)}
+.dact.rejected.on{border-color:var(--red);background:var(--red-l);color:var(--red)}
+.dact-i{font-size:1.15rem}
+.btn-edit{width:100%;padding:13px;border-radius:var(--r2);background:var(--ink);border:none;color:#fff;font-size:.95rem;font-weight:500;cursor:pointer;margin-bottom:9px;margin-top:6px}
+.btn-del{width:100%;padding:12px;border-radius:var(--r2);background:transparent;border:1.5px solid var(--red);color:var(--red);font-size:.9rem;cursor:pointer}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:20px;font-size:.82rem;font-weight:500;opacity:0;pointer-events:none;transition:all .22s;z-index:500;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── GITHUB SYNC ── */
+.sync-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px;background:var(--card);border-bottom:1px solid var(--border);
+  font-size:.75rem;color:var(--ink3);
+}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .3s}
+.sync-dot.ok{background:var(--green)}
+.sync-dot.err{background:var(--red)}
+.sync-dot.busy{background:var(--gold);animation:pulse .8s infinite alternate}
+@keyframes pulse{from{opacity:.4}to{opacity:1}}
+.sync-txt{flex:1}
+.sync-btn{padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-size:.7rem;font-weight:500;color:var(--ink2);cursor:pointer;font-family:inherit;flex-shrink:0}
+.sync-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* GitHub Setup Modal */
+.gh-modal-bg{
+  position:fixed;inset:0;background:rgba(28,26,23,.55);z-index:300;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  backdrop-filter:blur(6px);
+}
+.gh-modal-bg.open{opacity:1;pointer-events:all}
+.gh-sheet{
+  background:var(--bg);border-radius:28px 28px 0 0;
+  padding:0 20px calc(32px + var(--safe));
+  width:100%;max-width:480px;max-height:88vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+.gh-modal-bg.open .gh-sheet{transform:translateY(0)}
+.gh-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 20px}
+.gh-title{font-family:var(--serif);font-size:1.4rem;font-weight:400;margin-bottom:6px}
+.gh-title em{font-style:italic;color:var(--gold)}
+.gh-sub{font-size:.82rem;color:var(--ink3);line-height:1.6;margin-bottom:22px}
+.gh-step{display:flex;gap:12px;margin-bottom:16px;padding:13px;background:var(--card);border-radius:var(--r);border:1px solid var(--border)}
+.gh-step-n{width:24px;height:24px;border-radius:50%;background:var(--gold);color:#fff;font-size:.75rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.gh-step-txt{font-size:.82rem;line-height:1.5;color:var(--ink2)}
+.gh-step-txt strong{color:var(--ink);font-weight:600}
+.gh-step-txt a{color:var(--gold);text-decoration:none}
+.gh-field{margin-bottom:14px}
+.gh-label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);display:block;margin-bottom:6px}
+.gh-input{width:100%;padding:12px 13px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--card);font-size:.9rem;color:var(--ink);outline:none;font-family:inherit}
+.gh-input:focus{border-color:var(--gold)}
+.gh-connect-btn{width:100%;padding:13px;border-radius:var(--r2);background:var(--ink);border:none;color:#fff;font-size:.95rem;font-weight:500;cursor:pointer;margin-top:6px}
+.gh-connect-btn:disabled{opacity:.4;cursor:not-allowed}
+.gh-disconnect{width:100%;padding:11px;border-radius:var(--r2);background:transparent;border:1.5px solid var(--red);color:var(--red);font-size:.88rem;cursor:pointer;margin-top:8px}
+.gh-note{font-size:.73rem;color:var(--ink3);line-height:1.5;margin-top:10px;padding:10px 12px;background:var(--gold-l);border-radius:var(--r);color:var(--gold-d)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ══ GALLERY PAGE ══ -->
+<div class="page active" id="pg-gallery">
+  <div class="topbar">
+    <div class="logo">Mindful<span>Cart</span></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="openGHModal()" style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem" title="GitHub Sync">☁</button>
+      <button class="fab" onclick="openForm(null)">+</button>
+    </div>
+  </div>
+  <div class="sync-bar" id="sync-bar">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span class="sync-txt" id="sync-txt">GitHub nicht verbunden — ☁ tippen zum Einrichten</span>
+    <button class="sync-btn" id="sync-btn" onclick="ghSync()" disabled>Sync</button>
+  </div>
+  <div class="tabs">
+    <button class="tbtn on" onclick="goPage('gallery',this)">Galerie</button>
+    <button class="tbtn" onclick="goPage('stats',this)">Statistik</button>
+  </div>
+  <div class="filter-row">
+    <button class="fchip on" onclick="setFilter('all',this)">Alle</button>
+    <button class="fchip" onclick="setFilter('watching',this)">👁 Beobachten</button>
+    <button class="fchip" onclick="setFilter('bought',this)">✓ Gekauft</button>
+    <button class="fchip" onclick="setFilter('rejected',this)">✕ Verworfen</button>
+    <div class="vtrow">
+      <button class="vtbtn on" id="vt-g" onclick="setView('grid')">⊞</button>
+      <button class="vtbtn" id="vt-l" onclick="setView('list')">☰</button>
+    </div>
+  </div>
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<!-- ══ STATS PAGE ══ -->
+<div class="page" id="pg-stats">
+  <div class="topbar">
+    <div class="logo">Mindful<span>Cart</span></div>
+    <button class="fab" onclick="openForm(null)">+</button>
+  </div>
+  <div class="tabs">
+    <button class="tbtn" onclick="goPage('gallery',this)">Galerie</button>
+    <button class="tbtn on" onclick="goPage('stats',this)">Statistik</button>
+  </div>
+  <div class="stats-body" id="stats-body"></div>
+</div>
+
+</div><!-- /#app -->
+
+<!-- ══ FORM PAGE ══ -->
+<div id="form-page">
+  <div class="form-topbar">
+    <button class="back-btn" onclick="closeForm()">←</button>
+    <div class="form-topbar-t" id="form-title">Neues <em style="font-style:italic;color:var(--gold)">Produkt</em></div>
+    <button onclick="closeForm()" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.82rem">Abbrechen</button>
+  </div>
+  <div class="step-ind" id="step-ind">
+    <div class="sdot" id="sd0"></div>
+    <div class="sdot" id="sd1"></div>
+    <div class="sdot" id="sd2"></div>
+    <div class="sdot" id="sd3"></div>
+    <div class="sdot" id="sd4"></div>
+    <span class="snum" id="snum">1 / 5</span>
+  </div>
+
+  <!-- Step 1: Kategorie -->
+  <div class="step active" id="s0">
+    <div class="step-t">Welche <em>Kategorie</em>?</div>
+    <div class="step-s">Wähle eine passende Kategorie.</div>
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
+
+  <!-- Step 2: Produkt -->
+  <div class="step" id="s1">
+    <div class="step-t">Das <em>Produkt</em></div>
+    <div class="step-s">Name, Preis, wann gesehen und Link.</div>
+    <div class="field"><label class="flabel">Produktname *</label><input class="fi" id="f-name" placeholder="z.B. Arc'teryx Beta Jacket…" maxlength="120"/></div>
+    <div class="field"><label class="flabel">Preis (EUR)</label><input class="fi" id="f-price" type="number" min="0" step="0.01" placeholder="0.00"/></div>
+    <div class="field"><label class="flabel">Gesehen am</label><input class="fi" id="f-seen" type="date"/></div>
+    <div class="field"><label class="flabel">Link / URL (optional)</label><input class="fi" id="f-url" type="url" placeholder="https://…"/></div>
+  </div>
+
+  <!-- Step 3: Bild + Priorität + Status -->
+  <div class="step" id="s2">
+    <div class="step-t">Bild & <em>Priorität</em></div>
+    <div class="step-s">Bild hinzufügen, Wichtigkeit und Status setzen.</div>
+    <div class="field">
+      <label class="flabel">Bild (optional)</label>
+      <div id="ipw" class="img-prev-wrap" style="display:none"><img id="iprev" src="" alt=""/><button class="img-rm" onclick="removeImg()">✕</button></div>
+      <div class="upload-area" id="uarea"><div class="upload-ico">📸</div><div class="upload-txt">Tippen zum Hochladen<br><span style="font-size:.7rem;opacity:.7">JPG · PNG · WEBP</span></div><input type="file" id="f-img" accept="image/*" onchange="handleImg(event)"/></div>
+    </div>
+    <div class="field">
+      <label class="flabel">Priorität</label>
+      <div class="pstars" id="pstars">
+        <button type="button" class="pstar" data-p="1" onclick="setPrio(1)">⭐</button>
+        <button type="button" class="pstar" data-p="2" onclick="setPrio(2)">⭐</button>
+        <button type="button" class="pstar" data-p="3" onclick="setPrio(3)">⭐</button>
+        <button type="button" class="pstar" data-p="4" onclick="setPrio(4)">⭐</button>
+        <button type="button" class="pstar" data-p="5" onclick="setPrio(5)">⭐</button>
+      </div>
+      <div class="prio-lbl" id="prio-lbl">Keine Priorität gesetzt</div>
+    </div>
+    <div class="field">
+      <label class="flabel">Status</label>
+      <div class="stat-grid">
+        <button type="button" class="sbtn watching on" onclick="setStat('watching')">👁 Beobachten</button>
+        <button type="button" class="sbtn bought" onclick="setStat('bought')">✓ Gekauft</button>
+        <button type="button" class="sbtn rejected" onclick="setStat('rejected')">✕ Verworfen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Deadline -->
+  <div class="step" id="s3">
+    <div class="step-t">Wann <em>entscheiden</em>?</div>
+    <div class="step-s">Setze eine Wartefrist. Mindestens 30 Tage schützen vor Impulskäufen.</div>
+    <div class="field">
+      <label class="flabel">Schnellauswahl</label>
+      <div class="dl-presets">
+        <button type="button" class="dpbtn" onclick="setDLPreset(14,this)">14 Tage</button>
+        <button type="button" class="dpbtn on" onclick="setDLPreset(30,this)">30 Tage ✓</button>
+        <button type="button" class="dpbtn" onclick="setDLPreset(60,this)">60 Tage</button>
+        <button type="button" class="dpbtn" onclick="setDLPreset(90,this)">90 Tage</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="flabel">Deadline</label>
+      <input class="fi" id="f-dl" type="date" oninput="updDLInfo()"/>
+      <div class="dl-info" id="dl-info"></div>
+    </div>
+  </div>
+
+  <!-- Step 5: Begründung -->
+  <div class="step" id="s4">
+    <div class="step-t">Warum <em>willst</em> du es?</div>
+    <div class="step-s">Begründe ehrlich — macht das wirklich dein Leben besser?</div>
+    <div class="field"><label class="flabel">Warum macht das mein Leben besser?</label><textarea class="fi" id="f-reason" placeholder="z.B. Meine aktuelle Jacke ist nach 3 Jahren nicht mehr wasserdicht. Für Alpin-Touren brauche ich zuverlässigen Schutz…"></textarea></div>
+    <div class="field"><label class="flabel">Notiz (optional)</label><textarea class="fi" id="f-note" placeholder="Alternativen, Links, weitere Gedanken…" style="height:70px"></textarea></div>
+  </div>
+
+  <div class="form-nav">
+    <button class="btn-bk" id="btn-bk" onclick="stepBack()" style="display:none">← Zurück</button>
+    <button class="btn-next" id="btn-nx" onclick="stepNext()">Weiter →</button>
+  </div>
+</div>
+
+<!-- ══ DETAIL PAGE ══ -->
+<div id="det-page">
+  <div style="position:relative">
+    <div id="det-hero"></div>
+    <div class="det-topbar">
+      <button class="gbtn" onclick="closeDetail()">←</button>
+      <button class="gbtn" onclick="editCurrent()">✎</button>
+    </div>
+  </div>
+  <div class="det-body">
+    <div class="det-cat-pill" id="dc-cat"></div>
+    <div class="det-name" id="dc-name"></div>
+    <div class="det-price" id="dc-price"></div>
+    <div class="det-mgrid" id="dc-grid"></div>
+    <div class="det-sec" id="dc-dl-sec" style="display:none">
+      <div class="det-sec-t">Entscheidungs-Countdown</div>
+      <div id="dc-dl-info"></div>
+      <div class="det-dl-bar"><div class="det-dl-fill" id="dc-dl-fill"></div></div>
+    </div>
+    <div class="det-sec" id="dc-reason-sec" style="display:none">
+      <div class="det-sec-t">Warum willst du es?</div>
+      <div class="det-box" id="dc-reason"></div>
+    </div>
+    <div class="det-sec" id="dc-note-sec" style="display:none">
+      <div class="det-sec-t">Notiz</div>
+      <div class="det-box" id="dc-note"></div>
+    </div>
+    <div class="det-sec">
+      <div class="det-sec-t">Status ändern</div>
+      <div class="det-acts" id="dc-acts"></div>
+    </div>
+    <button class="btn-edit" onclick="editCurrent()">✎ Bearbeiten</button>
+    <button class="btn-del" onclick="detDelete()">🗑 Löschen</button>
+  </div>
+</div>
+
+<!-- ══ GITHUB MODAL ══ -->
+<div class="gh-modal-bg" id="gh-modal" onclick="if(event.target===this)closeGHModal()">
+  <div class="gh-sheet">
+    <div class="gh-handle"></div>
+    <div class="gh-title">GitHub <em>Sync</em></div>
+    <div class="gh-sub">Deine Daten werden in einem GitHub-Repository als JSON gespeichert — kostenlos, privat, von überall abrufbar.</div>
+    <div class="gh-step"><div class="gh-step-n">1</div><div class="gh-step-txt">Gehe zu <a href="https://github.com/new" target="_blank" rel="noopener"><strong>github.com/new</strong></a> und erstelle ein neues Repository (z.B. <strong>mindfulcart-data</strong>). Kann <strong>privat</strong> sein.</div></div>
+    <div class="gh-step"><div class="gh-step-n">2</div><div class="gh-step-txt">Gehe zu <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener"><strong>github.com/settings/tokens/new</strong></a> — wähle <strong>repo</strong> Scope — Token generieren und hier einfügen.</div></div>
+    <div class="gh-field"><label class="gh-label">GitHub Token (ghp_...)</label><input class="gh-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off"/></div>
+    <div class="gh-field"><label class="gh-label">GitHub Username</label><input class="gh-input" id="gh-user" placeholder="dein-username"/></div>
+    <div class="gh-field"><label class="gh-label">Repository Name</label><input class="gh-input" id="gh-repo" placeholder="mindfulcart-data"/></div>
+    <div class="gh-field"><label class="gh-label">Dateiname</label><input class="gh-input" id="gh-file" value="data.json" placeholder="data.json"/></div>
+    <div class="gh-note">🔒 Token wird nur in deinem Browser gespeichert — nie an Dritte übertragen.</div>
+    <button class="gh-connect-btn" id="gh-connect-btn" onclick="ghConnect()">Verbinden &amp; Sync</button>
+    <button class="gh-disconnect" id="gh-disconnect-btn" onclick="ghDisconnect()" style="display:none">Verbindung trennen</button>
+    <button onclick="closeGHModal()" style="width:100%;padding:11px;border-radius:var(--r2);background:transparent;border:none;color:var(--ink3);font-size:.9rem;cursor:pointer;margin-top:6px">Abbrechen</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+var CATS=[
+  {id:'kleidung',l:'Kleidung',e:'👕'},{id:'technik',l:'Technik',e:'💻'},
+  {id:'buecher',l:'Bücher',e:'📚'},{id:'supplements',l:'Supplements',e:'💊'},
+  {id:'lifestyle',l:'Lifestyle',e:'✨'},{id:'sport',l:'Sport',e:'🏋️'},
+  {id:'essen',l:'Essen',e:'🍽️'},{id:'sonstige',l:'Sonstige',e:'📦'},
+];
+
+var items=[];
+var curFilter='all';
+var curView='grid';
+var curPage='gallery';
+var detailId=null;
+var editId=null;
+var curStep=0;
+var STEPS=5;
+
+/* form state */
+var fCat='',fStat='watching',fPrio=0,fImg=null;
+
+function save(){try{localStorage.setItem('mc_v4',JSON.stringify(items));}catch(e){}}
+function load(){try{var s=localStorage.getItem('mc_v4');if(s)items=JSON.parse(s);}catch(e){}}
+
+/* ═══════════ UTILS ═══════════ */
+function eur(v){if(!v&&v!==0)return'—';return new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(v);}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function fdate(iso){if(!iso)return'—';return new Date(iso).toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'});}
+function dLeft(iso){if(!iso)return null;return Math.ceil((new Date(iso)-Date.now())/864e5);}
+function dAgo(iso){if(!iso)return 0;return Math.max(0,Math.floor((Date.now()-new Date(iso))/864e5));}
+function catE(id){var c=CATS.find(function(x){return x.id===id;});return c?c.e:'📦';}
+function catL(id){var c=CATS.find(function(x){return x.id===id;});return c?c.l:'Sonstige';}
+function toast(m){var el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},2200);}
+
+/* ═══════════ PAGE NAV ═══════════ */
+function goPage(p,btn){
+  curPage=p;
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('pg-'+p).classList.add('active');
+  // sync all tab buttons that match
+  document.querySelectorAll('.tbtn').forEach(function(b){
+    b.classList.toggle('on',(p==='gallery'&&b.textContent.trim()==='Galerie')||(p==='stats'&&b.textContent.trim()==='Statistik'));
+  });
+  if(p==='stats')renderStats(); else renderGallery();
+}
+
+/* ═══════════ GALLERY ═══════════ */
+function setFilter(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.fchip').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderGallery();
+}
+function setView(v){
+  curView=v;
+  document.getElementById('vt-g').classList.toggle('on',v==='grid');
+  document.getElementById('vt-l').classList.toggle('on',v==='list');
+  renderGallery();
+}
+
+function renderGallery(){
+  var fil=items.filter(function(i){return curFilter==='all'||i.status===curFilter;});
+  fil.sort(function(a,b){
+    if((b.priority||0)!==(a.priority||0))return(b.priority||0)-(a.priority||0);
+    return new Date(b.seenAt||b.createdAt)-new Date(a.seenAt||a.createdAt);
+  });
+  var g=document.getElementById('gallery');
+  g.className='gallery'+(curView==='list'?' lm':'');
+
+  if(!fil.length){
+    g.innerHTML='<div class="empty"><div class="empty-e">🛒</div><div class="empty-t">Noch nichts hier</div><div class="empty-s">Tippe auf <strong>+</strong> um dein erstes Produkt hinzuzufügen.</div></div>';
+    return;
+  }
+
+  var html='';
+  fil.forEach(function(item,i){
+    var dl=dLeft(item.deadline);
+    var dlPill='';
+    if(item.deadline){
+      if(dl<0)dlPill='<span class="dl-pill done">Frist vorbei</span>';
+      else if(dl<=7)dlPill='<span class="dl-pill urg">'+dl+'d !</span>';
+      else dlPill='<span class="dl-pill">'+dl+' Tage</span>';
+    }
+    var pDots='<div class="prio-dots">';
+    for(var p=1;p<=5;p++)pDots+='<span class="pdot'+(p<=(item.priority||0)?' on':'')+'"></span>';
+    pDots+='</div>';
+
+    var imgH='';
+    if(item.image){
+      imgH='<img class="gcard-thumb'+(curView==='list'?' lm':'')+'" src="'+item.image+'" alt=""/>';
+    }else{
+      imgH='<div class="gcard-placeholder'+(curView==='list'?' lm':'')+'">'+catE(item.category)+'</div>';
+    }
+
+    var badge='';
+    if(item.status==='bought')badge='<span class="gcard-badge bought">✓ Gekauft</span>';
+    if(item.status==='rejected')badge='<span class="gcard-badge rejected">Verworfen</span>';
+
+    html+='<div class="gcard'+(item.status==='rejected'?' rej':'')+(curView==='list'?' lm':'')+'" onclick="openDetail(\''+item.id+'\')" style="animation-delay:'+(i*.04)+'s">';
+    html+='<div class="gcard-img-wrap">'+imgH+badge+'</div>';
+    html+='<div class="gcard-body">';
+    html+='<div class="gcard-cat">'+esc(catL(item.category))+'</div>';
+    html+='<div class="gcard-name">'+esc(item.name)+'</div>';
+    html+='<div class="gcard-price">'+eur(item.price)+'</div>';
+    html+='<div class="gcard-foot">'+pDots+(dlPill||'<span class="gcard-date">'+fdate(item.seenAt||item.createdAt)+'</span>')+'</div>';
+    html+='</div></div>';
+  });
+  g.innerHTML=html;
+}
+
+/* ═══════════ STATS ═══════════ */
+function renderStats(){
+  var bought=items.filter(function(i){return i.status==='bought';});
+  var rejected=items.filter(function(i){return i.status==='rejected';});
+  var watching=items.filter(function(i){return i.status==='watching';});
+  var spent=bought.reduce(function(s,i){return s+(i.price||0);},0);
+  var saved=rejected.reduce(function(s,i){return s+(i.price||0);},0);
+  var watchV=watching.reduce(function(s,i){return s+(i.price||0);},0);
+
+  var cmap={};
+  items.forEach(function(i){var k=catL(i.category);cmap[k]=(cmap[k]||0)+(i.price||0);});
+  var carr=Object.entries(cmap).sort(function(a,b){return b[1]-a[1];});
+  var mc=carr.length?carr[0][1]:1;
+
+  var h='';
+  h+='<div class="sc dk"><div class="sc-l">💰 Nicht ausgegeben</div><div class="sc-v">'+eur(saved)+'</div><div class="sc-s">'+rejected.length+' Käufe bewusst abgelehnt</div></div>';
+  h+='<div class="sc-grid">';
+  h+='<div class="sc"><div class="sc-l">🛍 Ausgegeben</div><div class="sc-v">'+eur(spent)+'</div><div class="sc-s">'+bought.length+' Käufe</div></div>';
+  h+='<div class="sc"><div class="sc-l">👁 Beobachtet</div><div class="sc-v">'+watching.length+'</div><div class="sc-s">'+eur(watchV)+'</div></div>';
+  h+='<div class="sc"><div class="sc-l">📦 Gesamt</div><div class="sc-v">'+items.length+'</div><div class="sc-s">Produkte</div></div>';
+  h+='<div class="sc"><div class="sc-l">⏱ Aktive Fristen</div><div class="sc-v">'+watching.filter(function(i){return i.deadline&&dLeft(i.deadline)>=0;}).length+'</div><div class="sc-s">laufen noch</div></div>';
+  h+='</div>';
+  if(carr.length){
+    h+='<div class="sc"><div class="sc-l" style="margin-bottom:13px">Nach Kategorie</div><div class="blist">';
+    carr.forEach(function(e){h+='<div class="brow"><div class="brow-top"><span>'+esc(e[0])+'</span><span style="color:var(--ink3)">'+eur(e[1])+'</span></div><div class="brow-track"><div class="brow-fill" style="width:'+Math.round((e[1]/mc)*100)+'%"></div></div></div>';});
+    h+='</div></div>';
+  }
+  document.getElementById('stats-body').innerHTML=h;
+}
+
+/* ═══════════ FORM ═══════════ */
+function openForm(id){
+  editId=id||null;fCat='';fStat='watching';fPrio=0;fImg=null;curStep=0;
+  var item=null;
+  if(editId){
+    item=items.find(function(i){return i.id===editId;});
+    if(item){fCat=item.category||'';fStat=item.status||'watching';fPrio=item.priority||0;fImg=item.image||null;}
+  }
+  document.getElementById('form-title').innerHTML=editId?'Produkt <em style="font-style:italic;color:var(--gold)">bearbeiten</em>':'Neues <em style="font-style:italic;color:var(--gold)">Produkt</em>';
+  document.getElementById('f-name').value=item?item.name||'':'';
+  document.getElementById('f-price').value=item&&item.price?item.price:'';
+  document.getElementById('f-seen').value=item&&item.seenAt?item.seenAt.slice(0,10):new Date().toISOString().slice(0,10);
+  document.getElementById('f-url').value=item?item.url||'':'';
+  document.getElementById('f-reason').value=item?item.reason||'':'';
+  document.getElementById('f-note').value=item?item.note||'':'';
+  // deadline default +30 days
+  var defDL=item&&item.deadline?item.deadline.slice(0,10):new Date(Date.now()+30*864e5).toISOString().slice(0,10);
+  document.getElementById('f-dl').value=defDL;
+
+  if(fImg){
+    document.getElementById('iprev').src=fImg;
+    document.getElementById('ipw').style.display='block';
+    document.getElementById('uarea').style.display='none';
+  }else{
+    document.getElementById('ipw').style.display='none';
+    document.getElementById('uarea').style.display='block';
+    document.getElementById('f-img').value='';
+  }
+
+  renderCatGrid();renderPrioStars();renderStatBtns();updDLInfo();
+  showStep(0);
+  document.getElementById('form-page').classList.add('open');
+}
+function closeForm(){document.getElementById('form-page').classList.remove('open');}
+
+function showStep(n){
+  curStep=n;
+  for(var i=0;i<STEPS;i++){
+    var el=document.getElementById('s'+i);if(el)el.classList.toggle('active',i===n);
+    var d=document.getElementById('sd'+i);if(d)d.classList.toggle('done',i<n);
+  }
+  document.getElementById('snum').textContent=(n+1)+' / '+STEPS;
+  document.getElementById('btn-bk').style.display=n>0?'':'none';
+  document.getElementById('btn-nx').textContent=n===STEPS-1?'✓ Speichern':'Weiter →';
+  document.getElementById('form-page').scrollTo({top:0,behavior:'smooth'});
+}
+function stepNext(){
+  if(curStep===0&&!fCat){toast('Bitte Kategorie wählen');return;}
+  if(curStep===1&&!document.getElementById('f-name').value.trim()){toast('Bitte Produktname eingeben');return;}
+  if(curStep===STEPS-1){saveItem();return;}
+  showStep(curStep+1);
+}
+function stepBack(){if(curStep>0)showStep(curStep-1);}
+
+function renderCatGrid(){
+  var h='';
+  CATS.forEach(function(c){
+    h+='<button type="button" class="copt'+(fCat===c.id?' on':'')+'" onclick="pickCat(\''+c.id+'\')"><span class="copt-e">'+c.e+'</span><span class="copt-l">'+c.l+'</span></button>';
+  });
+  document.getElementById('cat-grid').innerHTML=h;
+}
+function pickCat(id){fCat=id;renderCatGrid();}
+
+function renderPrioStars(){
+  document.querySelectorAll('.pstar').forEach(function(b){b.classList.toggle('on',parseInt(b.dataset.p)<=fPrio);});
+  var ls=['Keine Priorität','Niedrig','Mittel','Mittel-Hoch','Hoch','Sehr hoch!'];
+  document.getElementById('prio-lbl').textContent=ls[fPrio]||'Keine';
+}
+function setPrio(p){fPrio=p;renderPrioStars();}
+
+function renderStatBtns(){
+  document.querySelectorAll('.sbtn').forEach(function(b){b.classList.toggle('on',b.classList.contains(fStat));});
+}
+function setStat(s){fStat=s;renderStatBtns();}
+
+function setDLPreset(days,btn){
+  var d=new Date(Date.now()+days*864e5);
+  document.getElementById('f-dl').value=d.toISOString().slice(0,10);
+  document.querySelectorAll('.dpbtn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');updDLInfo();
+}
+function updDLInfo(){
+  var v=document.getElementById('f-dl').value;
+  var el=document.getElementById('dl-info');
+  if(!v){el.textContent='';return;}
+  var dl=Math.ceil((new Date(v)-Date.now())/864e5);
+  if(dl<0){el.style.color='var(--red)';el.textContent='Datum liegt in der Vergangenheit';}
+  else if(dl<14){el.style.color='var(--red)';el.textContent='⚠ Nur '+dl+' Tage — zu kurz für eine bewusste Entscheidung';}
+  else{el.style.color='var(--green)';el.textContent='✓ '+dl+' Tage Bedenkzeit';}
+}
+
+function handleImg(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    fImg=ev.target.result;
+    document.getElementById('iprev').src=fImg;
+    document.getElementById('ipw').style.display='block';
+    document.getElementById('uarea').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+function removeImg(){
+  fImg=null;
+  document.getElementById('ipw').style.display='none';
+  document.getElementById('uarea').style.display='block';
+  document.getElementById('f-img').value='';
+}
+
+function saveItem(){
+  var name=document.getElementById('f-name').value.trim();
+  if(!name){toast('Name fehlt');return;}
+  var obj={
+    id:editId||uid(),name:name,
+    price:parseFloat(document.getElementById('f-price').value)||null,
+    category:fCat||'sonstige',status:fStat,priority:fPrio,image:fImg,
+    url:document.getElementById('f-url').value.trim(),
+    seenAt:document.getElementById('f-seen').value?new Date(document.getElementById('f-seen').value).toISOString():new Date().toISOString(),
+    deadline:document.getElementById('f-dl').value?new Date(document.getElementById('f-dl').value).toISOString():null,
+    reason:document.getElementById('f-reason').value.trim(),
+    note:document.getElementById('f-note').value.trim(),
+    createdAt:editId?((items.find(function(i){return i.id===editId;})||{}).createdAt||new Date().toISOString()):new Date().toISOString(),
+  };
+  if(editId){items=items.map(function(i){return i.id===editId?obj:i;});toast('✓ Gespeichert');}
+  else{items.unshift(obj);toast('✓ Hinzugefügt');}
+  save();closeForm();renderGallery();
+  if(curPage==='stats')renderStats();
+  if(detailId===editId)renderDetail(detailId);
+}
+
+/* ═══════════ DETAIL ═══════════ */
+function openDetail(id){
+  detailId=id;renderDetail(id);
+  document.getElementById('det-page').classList.add('open');
+}
+function closeDetail(){document.getElementById('det-page').classList.remove('open');detailId=null;}
+function editCurrent(){var id=detailId;closeDetail();setTimeout(function(){openForm(id);},220);}
+function detDelete(){
+  if(!detailId||!confirm('Löschen?'))return;
+  items=items.filter(function(i){return i.id!==detailId;});
+  save();closeDetail();renderGallery();toast('Gelöscht');
+}
+
+function renderDetail(id){
+  var item=items.find(function(i){return i.id===id;});if(!item)return;
+  var h=document.getElementById('det-hero');
+  if(item.image)h.innerHTML='<img src="'+item.image+'" style="width:100%;height:240px;object-fit:cover;display:block" alt=""/>';
+  else h.innerHTML='<div style="width:100%;height:160px;background:var(--gold-l);display:flex;align-items:center;justify-content:center;font-size:4rem">'+catE(item.category)+'</div>';
+  document.getElementById('dc-cat').textContent=catL(item.category);
+  document.getElementById('dc-name').textContent=item.name;
+  document.getElementById('dc-price').textContent=item.price?eur(item.price):'—';
+  var sl={watching:'👁 Beobachten',bought:'✓ Gekauft',rejected:'✕ Verworfen'};
+  var pr=['—','⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'][item.priority||0]||'—';
+  document.getElementById('dc-grid').innerHTML=
+    '<div class="det-cell"><div class="det-cl">Gesehen am</div><div class="det-cv">'+fdate(item.seenAt)+'</div></div>'+
+    '<div class="det-cell"><div class="det-cl">Status</div><div class="det-cv">'+sl[item.status]+'</div></div>'+
+    '<div class="det-cell"><div class="det-cl">Priorität</div><div class="det-cv">'+pr+'</div></div>'+
+    '<div class="det-cell"><div class="det-cl">Im Radar seit</div><div class="det-cv">'+dAgo(item.seenAt||item.createdAt)+' Tagen</div></div>';
+  // Deadline
+  var dls=document.getElementById('dc-dl-sec');
+  if(item.deadline){
+    dls.style.display='block';
+    var dl=dLeft(item.deadline);
+    var seenMs=new Date(item.seenAt||item.createdAt).getTime();
+    var dlMs=new Date(item.deadline).getTime();
+    var total=(dlMs-seenMs)/864e5;
+    var elapsed=(Date.now()-seenMs)/864e5;
+    var pct=Math.max(0,Math.min(100,Math.round((elapsed/total)*100)));
+    var fill=document.getElementById('dc-dl-fill');
+    fill.style.width=pct+'%';fill.style.background=pct>85?'var(--red)':pct>60?'var(--gold)':'var(--green)';
+    var di=document.getElementById('dc-dl-info');
+    if(dl<0)di.innerHTML='<span style="color:var(--red);font-size:.84rem;font-weight:500">Frist abgelaufen — jetzt entscheiden!</span>';
+    else di.innerHTML='<span style="font-size:.84rem;color:var(--ink2)">Deadline: '+fdate(item.deadline)+' &nbsp;·&nbsp; noch <strong>'+dl+' Tage</strong></span>';
+  }else{dls.style.display='none';}
+  // Reason
+  var rs=document.getElementById('dc-reason-sec');
+  if(item.reason){document.getElementById('dc-reason').textContent=item.reason;rs.style.display='block';}else{rs.style.display='none';}
+  var ns=document.getElementById('dc-note-sec');
+  if(item.note){document.getElementById('dc-note').textContent=item.note;ns.style.display='block';}else{ns.style.display='none';}
+  // Actions
+  var qa='';
+  [{s:'watching',l:'👁 Beobachten'},{s:'bought',l:'✓ Gekauft'},{s:'rejected',l:'✕ Verworfen'}].forEach(function(x){
+    qa+='<button type="button" class="dact '+x.s+(item.status===x.s?' on':'')+'" onclick="setStatDet(\''+x.s+'\')">';
+    qa+='<span class="dact-i">'+(x.s==='watching'?'👁':x.s==='bought'?'✓':'✕')+'</span>'+x.l+'</button>';
+  });
+  document.getElementById('dc-acts').innerHTML=qa;
+  detailId=id;
+}
+function setStatDet(s){
+  items=items.map(function(i){return i.id===detailId?Object.assign({},i,{status:s}):i;});
+  save();renderDetail(detailId);renderGallery();toast('Status geändert');
+}
+
+/* ═══════════ INIT ═══════════ */
+function seedDemo(){
+  items=[
+    {id:'d1',name:"Arc'teryx Beta AR Jacket",price:699,category:'kleidung',status:'watching',priority:4,image:null,url:'',seenAt:new Date(Date.now()-12*864e5).toISOString(),deadline:new Date(Date.now()+18*864e5).toISOString(),reason:'Meine aktuelle Jacke ist nach 3 Jahren nicht mehr wasserdicht. Für Alpin-Touren brauche ich zuverlässigen Schutz.',note:'Vielleicht Sale im November abwarten.',createdAt:new Date(Date.now()-12*864e5).toISOString()},
+    {id:'d2',name:'Sony WH-1000XM6',price:379,category:'technik',status:'watching',priority:2,image:null,url:'',seenAt:new Date(Date.now()-7*864e5).toISOString(),deadline:new Date(Date.now()+53*864e5).toISOString(),reason:'Für konzentriertes Arbeiten im Café wäre Noise-Cancelling nützlich.',note:'',createdAt:new Date(Date.now()-7*864e5).toISOString()},
+    {id:'d3',name:'The Mountain Is You',price:16.99,category:'buecher',status:'bought',priority:3,image:null,url:'',seenAt:new Date(Date.now()-30*864e5).toISOString(),deadline:null,reason:'Empfehlung von 3 verschiedenen Menschen in einer Woche.',note:'',createdAt:new Date(Date.now()-30*864e5).toISOString()},
+    {id:'d4',name:'Whoop 4.0 Jahres-Abo',price:239,category:'sport',status:'rejected',priority:2,image:null,url:'',seenAt:new Date(Date.now()-45*864e5).toISOString(),deadline:null,reason:'Wollte Schlaf besser tracken.',note:'Apple Watch reicht bereits.',createdAt:new Date(Date.now()-45*864e5).toISOString()},
+    {id:'d5',name:'iPad Pro M4 13"',price:1399,category:'technik',status:'watching',priority:5,image:null,url:'',seenAt:new Date(Date.now()-3*864e5).toISOString(),deadline:new Date(Date.now()+87*864e5).toISOString(),reason:'Für digitales Skizzieren und Note-taking. Würde Paper komplett ersetzen.',note:'Pencil Pro-Preis erst checken.',createdAt:new Date(Date.now()-3*864e5).toISOString()},
+  ];
+}
+load();
+if(!items.length)seedDemo();
+ghLoadConfig();
+renderGallery();
+
+/* ═══════════════════════════════════════════
+   GITHUB SYNC
+   Uses the GitHub Contents API to read/write
+   a single JSON file in a user-owned repo.
+   Docs: https://docs.github.com/en/rest/repos/contents
+═══════════════════════════════════════════ */
+
+var ghCfg = {token:'', user:'', repo:'', file:'data.json'};
+var ghFileSHA = null; // needed for updates (GitHub requires the blob SHA)
+
+/* Load saved config from localStorage */
+function ghLoadConfig() {
+  try {
+    var s = localStorage.getItem('mc_gh_cfg');
+    if (s) {
+      ghCfg = JSON.parse(s);
+      ghUpdateBar('ok', 'Verbunden mit ' + ghCfg.user + '/' + ghCfg.repo, true);
+      // Auto-pull on load
+      ghPull(true);
+    }
+  } catch(e) {}
+}
+
+/* Save config */
+function ghSaveConfig() {
+  try { localStorage.setItem('mc_gh_cfg', JSON.stringify(ghCfg)); } catch(e) {}
+}
+
+/* Update the small sync status bar */
+function ghUpdateBar(state, msg, enableBtn) {
+  var dot = document.getElementById('sync-dot');
+  var txt = document.getElementById('sync-txt');
+  var btn = document.getElementById('sync-btn');
+  dot.className = 'sync-dot ' + (state || '');
+  txt.textContent = msg || '';
+  btn.disabled = !enableBtn;
+}
+
+/* Open setup modal — prefill if already configured */
+function openGHModal() {
+  document.getElementById('gh-token').value = ghCfg.token || '';
+  document.getElementById('gh-user').value  = ghCfg.user  || '';
+  document.getElementById('gh-repo').value  = ghCfg.repo  || '';
+  document.getElementById('gh-file').value  = ghCfg.file  || 'data.json';
+  var hasCfg = !!(ghCfg.token && ghCfg.user && ghCfg.repo);
+  document.getElementById('gh-disconnect-btn').style.display = hasCfg ? 'block' : 'none';
+  document.getElementById('gh-modal').classList.add('open');
+}
+function closeGHModal() {
+  document.getElementById('gh-modal').classList.remove('open');
+}
+
+/* Connect: validate inputs, do a test read, then push current data */
+async function ghConnect() {
+  var token = document.getElementById('gh-token').value.trim();
+  var user  = document.getElementById('gh-user').value.trim();
+  var repo  = document.getElementById('gh-repo').value.trim();
+  var file  = document.getElementById('gh-file').value.trim() || 'data.json';
+  if (!token || !user || !repo) { toast('Bitte alle Felder ausfüllen'); return; }
+
+  var btn = document.getElementById('gh-connect-btn');
+  btn.disabled = true; btn.textContent = 'Verbinde…';
+  ghUpdateBar('busy', 'Verbinde mit GitHub…', false);
+
+  ghCfg = {token, user, repo, file};
+
+  try {
+    // Try to read existing file first (to get SHA)
+    var existing = await ghReadFile();
+    if (existing && existing.items && existing.items.length > 0) {
+      // Remote has data — ask user what to do
+      var merge = confirm(
+        'Auf GitHub wurden ' + existing.items.length + ' Produkte gefunden.\n\n' +
+        'OK = Remote-Daten laden (überschreibt lokale Daten)\n' +
+        'Abbrechen = Lokale Daten hochladen (überschreibt Remote)'
+      );
+      if (merge) {
+        items = existing.items;
+        save();
+        renderGallery();
+        if (curPage === 'stats') renderStats();
+      } else {
+        await ghPush();
+      }
+    } else {
+      // No remote file yet — push local data
+      await ghPush();
+    }
+    ghSaveConfig();
+    ghUpdateBar('ok', 'Verbunden · ' + user + '/' + repo, true);
+    closeGHModal();
+    toast('✓ GitHub verbunden');
+  } catch(e) {
+    ghUpdateBar('err', 'Fehler: ' + e.message, false);
+    toast('Verbindung fehlgeschlagen: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = 'Verbinden & Sync';
+}
+
+/* Disconnect */
+function ghDisconnect() {
+  if (!confirm('GitHub-Verbindung wirklich trennen? Daten bleiben lokal erhalten.')) return;
+  ghCfg = {token:'', user:'', repo:'', file:'data.json'};
+  ghFileSHA = null;
+  try { localStorage.removeItem('mc_gh_cfg'); } catch(e) {}
+  ghUpdateBar('', 'GitHub nicht verbunden', false);
+  closeGHModal();
+  toast('Verbindung getrennt');
+}
+
+/* Build API URL */
+function ghApiUrl() {
+  return 'https://api.github.com/repos/' + ghCfg.user + '/' + ghCfg.repo + '/contents/' + ghCfg.file;
+}
+
+/* Read file from GitHub — returns parsed JSON or null */
+async function ghReadFile() {
+  var res = await fetch(ghApiUrl(), {
+    headers: {
+      'Authorization': 'token ' + ghCfg.token,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  });
+  if (res.status === 404) return null; // file doesn't exist yet
+  if (!res.ok) throw new Error('GitHub API ' + res.status + ': ' + await res.text());
+  var json = await res.json();
+  ghFileSHA = json.sha; // save SHA for updates
+  // Content is base64 encoded
+  var decoded = atob(json.content.replace(/\n/g, ''));
+  return JSON.parse(decoded);
+}
+
+/* Push local items to GitHub */
+async function ghPush() {
+  var payload = {items: items, updatedAt: new Date().toISOString()};
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+  var body = {
+    message: 'MindfulCart sync ' + new Date().toISOString().slice(0,16),
+    content: content,
+  };
+  if (ghFileSHA) body.sha = ghFileSHA; // required for updates
+
+  var res = await fetch(ghApiUrl(), {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + ghCfg.token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('Push fehlgeschlagen: ' + res.status);
+  var json = await res.json();
+  ghFileSHA = json.content.sha; // update SHA after write
+}
+
+/* Pull remote data into local */
+async function ghPull(silent) {
+  try {
+    ghUpdateBar('busy', 'Lade von GitHub…', false);
+    var remote = await ghReadFile();
+    if (remote && remote.items) {
+      items = remote.items;
+      save();
+      renderGallery();
+      if (curPage === 'stats') renderStats();
+      if (!silent) toast('✓ Daten geladen');
+    }
+    ghUpdateBar('ok', 'Verbunden · ' + ghCfg.user + '/' + ghCfg.repo + ' · ' + new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}), true);
+  } catch(e) {
+    ghUpdateBar('err', 'Sync-Fehler: ' + e.message, true);
+    if (!silent) toast('Sync fehlgeschlagen');
+  }
+}
+
+/* Full sync: push local → GitHub */
+async function ghSync() {
+  if (!ghCfg.token) { openGHModal(); return; }
+  var btn = document.getElementById('sync-btn');
+  btn.disabled = true; btn.textContent = '…';
+  ghUpdateBar('busy', 'Speichere auf GitHub…', false);
+  try {
+    await ghPush();
+    ghUpdateBar('ok', 'Gespeichert · ' + new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}), true);
+    toast('✓ Auf GitHub gespeichert');
+  } catch(e) {
+    ghUpdateBar('err', 'Fehler: ' + e.message, true);
+    toast('Sync fehlgeschlagen');
+  }
+  btn.disabled = false; btn.textContent = 'Sync';
+}
+
+/* Auto-sync after every save */
+var _origSave = save;
+save = function() {
+  _origSave();
+  if (ghCfg.token && ghCfg.user && ghCfg.repo) {
+    // debounce: wait 1.5s after last change before pushing
+    clearTimeout(save._t);
+    save._t = setTimeout(function() {
+      ghPush()
+        .then(function(){
+          ghUpdateBar('ok', 'Auto-gespeichert · ' + new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}), true);
+        })
+        .catch(function(e){ ghUpdateBar('err', 'Auto-Sync Fehler', true); });
+    }, 1500);
+  }
+};
+
+</script>
+</body>
+</html>
