@@ -1,21 +1,6 @@
 {
   "items": [
     {
-      "id": "d1",
-      "name": "Arc'teryx Beta AR Jacket",
-      "price": 699,
-      "category": "kleidung",
-      "status": "watching",
-      "priority": 4,
-      "image": null,
-      "url": "",
-      "seenAt": "2026-05-07T08:31:05.371Z",
-      "deadline": "2026-06-06T08:31:05.371Z",
-      "reason": "Meine aktuelle Jacke ist nach 3 Jahren nicht mehr wasserdicht. Für Alpin-Touren brauche ich zuverlässigen Schutz.",
-      "note": "Vielleicht Sale im November abwarten.",
-      "createdAt": "2026-05-07T08:31:05.371Z"
-    },
-    {
       "id": "d2",
       "name": "Sony WH-1000XM6",
       "price": 379,
@@ -31,21 +16,6 @@
       "createdAt": "2026-05-12T08:31:05.371Z"
     },
     {
-      "id": "d3",
-      "name": "The Mountain Is You",
-      "price": 16.99,
-      "category": "buecher",
-      "status": "bought",
-      "priority": 3,
-      "image": null,
-      "url": "",
-      "seenAt": "2026-04-19T08:31:05.371Z",
-      "deadline": null,
-      "reason": "Empfehlung von 3 verschiedenen Menschen in einer Woche.",
-      "note": "",
-      "createdAt": "2026-04-19T08:31:05.371Z"
-    },
-    {
       "id": "d4",
       "name": "Whoop 4.0 Jahres-Abo",
       "price": 239,
@@ -59,22 +29,7 @@
       "reason": "Wollte Schlaf besser tracken.",
       "note": "Apple Watch reicht bereits.",
       "createdAt": "2026-04-04T08:31:05.371Z"
-    },
-    {
-      "id": "d5",
-      "name": "iPad Pro M4 13\"",
-      "price": 1399,
-      "category": "technik",
-      "status": "watching",
-      "priority": 5,
-      "image": null,
-      "url": "",
-      "seenAt": "2026-05-16T08:31:05.371Z",
-      "deadline": "2026-08-14T08:31:05.371Z",
-      "reason": "Für digitales Skizzieren und Note-taking. Würde Paper komplett ersetzen.",
-      "note": "Pencil Pro-Preis erst checken.",
-      "createdAt": "2026-05-16T08:31:05.371Z"
     }
   ],
-  "updatedAt": "2026-05-19T08:33:36.595Z"
+  "updatedAt": "2026-05-19T08:33:47.825Z"
 }
