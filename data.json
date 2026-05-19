@@ -1,21 +1,6 @@
 {
   "items": [
     {
-      "id": "d1",
-      "name": "Arc'teryx Beta AR Jacket",
-      "price": 699,
-      "category": "kleidung",
-      "status": "watching",
-      "priority": 4,
-      "image": null,
-      "url": "",
-      "seenAt": "2026-05-07T07:46:44.976Z",
-      "deadline": "2026-06-06T07:46:44.977Z",
-      "reason": "Meine aktuelle Jacke ist nach 3 Jahren nicht mehr wasserdicht. FÃ¼r Alpin-Touren brauche ich zuverlÃ¤ssigen Schutz.",
-      "note": "Vielleicht Sale im November abwarten.",
-      "createdAt": "2026-05-07T07:46:44.977Z"
-    },
-    {
       "id": "d2",
       "name": "Sony WH-1000XM6",
       "price": 379,
@@ -29,21 +14,6 @@
       "reason": "FÃ¼r konzentriertes Arbeiten im CafÃ© wÃ¤re Noise-Cancelling nÃ¼tzlich.",
       "note": "",
       "createdAt": "2026-05-12T07:46:44.977Z"
-    },
-    {
-      "id": "d3",
-      "name": "The Mountain Is You",
-      "price": 16.99,
-      "category": "buecher",
-      "status": "bought",
-      "priority": 3,
-      "image": null,
-      "url": "",
-      "seenAt": "2026-04-19T07:46:44.977Z",
-      "deadline": null,
-      "reason": "Empfehlung von 3 verschiedenen Menschen in einer Woche.",
-      "note": "",
-      "createdAt": "2026-04-19T07:46:44.977Z"
     },
     {
       "id": "d4",
@@ -61,5 +31,5 @@
       "createdAt": "2026-04-04T07:46:44.977Z"
     }
   ],
-  "updatedAt": "2026-05-19T08:28:48.158Z"
+  "updatedAt": "2026-05-19T08:28:52.341Z"
 }
