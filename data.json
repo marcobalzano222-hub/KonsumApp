@@ -1,21 +1,6 @@
 {
   "items": [
     {
-      "id": "d2",
-      "name": "Sony WH-1000XM6",
-      "price": 379,
-      "category": "technik",
-      "status": "watching",
-      "priority": 2,
-      "image": null,
-      "url": "",
-      "seenAt": "2026-05-12T08:31:05.371Z",
-      "deadline": "2026-07-11T08:31:05.371Z",
-      "reason": "Für konzentriertes Arbeiten im Café wäre Noise-Cancelling nützlich.",
-      "note": "",
-      "createdAt": "2026-05-12T08:31:05.371Z"
-    },
-    {
       "id": "d4",
       "name": "Whoop 4.0 Jahres-Abo",
       "price": 239,
@@ -31,5 +16,5 @@
       "createdAt": "2026-04-04T08:31:05.371Z"
     }
   ],
-  "updatedAt": "2026-05-19T08:33:47.825Z"
+  "updatedAt": "2026-05-19T08:33:53.298Z"
 }
