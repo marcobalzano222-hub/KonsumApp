@@ -1,6 +1,21 @@
 {
   "items": [
     {
+      "id": "mpce4jc4wpf8",
+      "name": "Marco",
+      "price": null,
+      "category": "technik",
+      "status": "watching",
+      "priority": 5,
+      "image": null,
+      "url": "",
+      "seenAt": "2026-05-19T00:00:00.000Z",
+      "deadline": "2026-06-18T00:00:00.000Z",
+      "reason": "",
+      "note": "",
+      "createdAt": "2026-05-19T08:48:08.932Z"
+    },
+    {
       "id": "mpcdnp5vvdvm",
       "name": "Omega Moonswatch",
       "price": 275,
@@ -16,5 +31,5 @@
       "createdAt": "2026-05-19T08:35:03.332Z"
     }
   ],
-  "updatedAt": "2026-05-19T08:36:32.602Z"
+  "updatedAt": "2026-05-19T08:48:10.438Z"
 }
